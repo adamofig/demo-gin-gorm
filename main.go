@@ -5,24 +5,25 @@ import (
 )
 
 func main() {
+	InitDatabase()
+	AutoMigrateModels()
 
 	router := gin.Default()
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	router.GET("/", GetRootHtml)
 
 	router.GET("/:name", IndexHandler)
-	router.GET("/user", GetUsers)
-	router.GET("/newUser/:name", SaveUser)
-	router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-}
+	router.GET("/memory/users", GetUsers)
+	router.GET("/memory/users/:id", GetUserById)
 
-type User struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Company  string `json:"company"`
-	UserType string `json:"userType"`
+	// these methods are for CRUD to database.
+
+	router.GET("/users", GetUsersDB)
+
+	router.GET("/user/:id", GetUserByIdDB)
+	router.POST("/user", SaveDB)
+	router.DELETE("/user/:id", DeleteDB)
+
+	router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
 }
